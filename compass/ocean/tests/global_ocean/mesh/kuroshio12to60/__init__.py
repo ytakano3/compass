@@ -66,17 +66,7 @@ class Kuroshio12to60Mesh(MeshStep):
                                           cellWidthPole=35.,
                                           latPosEq=7.5, latWidthEq=3.0)
 
-        # Transition at Equator
-        latTransition = 0.0
-        latWidthTransition = 2.5
-        cellWidthVsLat = mdt.mergeCellWidthVsLat(
-            lat,
-            cellWidthSouth,
-            cellWidthNorth,
-            latTransition,
-            latWidthTransition)
-
-        _, cellWidth = np.meshgrid(lon, cellWidthVsLat)
+        _, cellWidth = np.meshgrid(lon, cellWidth)
 
         fc = read_feature_collection('wbc_rectangle1.geojson')
 
@@ -84,7 +74,7 @@ class Kuroshio12to60Mesh(MeshStep):
                                                           earth_radius,
                                                           max_length=0.25)
 
-        trans_width = 1600e3
+        trans_width = 800e3
         trans_start = 0
         dx_min = 12.
 
