@@ -13,6 +13,8 @@ from compass.ocean.tests.global_ocean.mesh.wc14.dynamic_adjustment import \
     WC14DynamicAdjustment
 from compass.ocean.tests.global_ocean.mesh.kuroshio.dynamic_adjustment \
     import KuroshioDynamicAdjustment
+from compass.ocean.tests.global_ocean.mesh.calcofi8to60.dynamic_adjustment \
+    import CalCOFI8to60DynamicAdjustment
 from compass.ocean.tests.global_ocean.init import Init
 from compass.ocean.tests.global_ocean.performance_test import PerformanceTest
 from compass.ocean.tests.global_ocean.restart_test import RestartTest
@@ -243,6 +245,29 @@ class GlobalOcean(TestGroup):
                     test_group=self, mesh=mesh, init=init,
                     time_integrator=time_integrator))
             dynamic_adjustment = KuroshioDynamicAdjustment(
+                test_group=self, mesh=mesh, init=init,
+                time_integrator=time_integrator)
+            self.add_test_case(dynamic_adjustment)
+            self.add_test_case(
+                FilesForE3SM(
+                    test_group=self, mesh=mesh, init=init,
+                    dynamic_adjustment=dynamic_adjustment))
+
+        # CalCOFI8to60
+        for mesh_name in ['CalCOFI8to60']:
+            mesh = Mesh(test_group=self, mesh_name=mesh_name)
+            self.add_test_case(mesh)
+
+            init = Init(test_group=self, mesh=mesh,
+                        initial_condition='PHC',
+                        with_bgc=False)
+            self.add_test_case(init)
+            time_integrator = 'split_explicit'
+            self.add_test_case(
+                PerformanceTest(
+                    test_group=self, mesh=mesh, init=init,
+                    time_integrator=time_integrator))
+            dynamic_adjustment = CalCOFI8to60DynamicAdjustment(
                 test_group=self, mesh=mesh, init=init,
                 time_integrator=time_integrator)
             self.add_test_case(dynamic_adjustment)
