@@ -33,7 +33,11 @@ class Kuroshio12to60Mesh(MeshStep):
                          package=self.__module__,
                          mesh_config_filename='kuroshio12to60.cfg')
 
-        self.add_input_file(filename='wbc_rectangle1.geojson',
+        self.add_input_file(filename='wbc_rectangle3-1.geojson',
+                            package=self.__module__)
+        self.add_input_file(filename='wbc_rectangle3-2.geojson',
+                            package=self.__module__)
+        self.add_input_file(filename='wbc_rectangle3-3.geojson',
                             package=self.__module__)
 
     def build_cell_width_lat_lon(self):
@@ -68,17 +72,49 @@ class Kuroshio12to60Mesh(MeshStep):
 
         _, cellWidth = np.meshgrid(lon, cellWidth)
 
-        fc = read_feature_collection('wbc_rectangle1.geojson')
+        fc1 = read_feature_collection('wbc_rectangle3-1.geojson')
 
-        so_signed_distance = signed_distance_from_geojson(fc, lon, lat,
+        ks_signed_distance1 = signed_distance_from_geojson(fc1, lon, lat,
                                                           earth_radius,
                                                           max_length=0.25)
 
-        trans_width = 800e3
+        trans_width = 400e3
         trans_start = 0
         dx_min = 12.
 
-        weights = 0.5 * (1 + np.tanh((so_signed_distance - trans_start) /
+        weights = 0.5 * (1 + np.tanh((ks_signed_distance1 - trans_start) /
+                                     trans_width))
+
+        cellWidth = dx_min * (1 - weights) + cellWidth * weights
+
+
+        fc2 = read_feature_collection('wbc_rectangle3-2.geojson')
+
+        ks_signed_distance2 = signed_distance_from_geojson(fc2, lon, lat,
+                                                          earth_radius,
+                                                          max_length=0.25)
+
+        trans_width = 400e3
+        trans_start = 0
+        dx_min = 40.
+
+        weights = 0.5 * (1 + np.tanh((ks_signed_distance2 - trans_start) /
+                                     trans_width))
+
+        cellWidth = dx_min * (1 - weights) + cellWidth * weights
+
+
+        fc3 = read_feature_collection('wbc_rectangle3-3.geojson')
+
+        ks_signed_distance3 = signed_distance_from_geojson(fc3, lon, lat,
+                                                          earth_radius,
+                                                          max_length=0.25)
+
+        trans_width = 400e3
+        trans_start = 0
+        dx_min = 30.
+
+        weights = 0.5 * (1 + np.tanh((ks_signed_distance3 - trans_start) /
                                      trans_width))
 
         cellWidth = dx_min * (1 - weights) + cellWidth * weights

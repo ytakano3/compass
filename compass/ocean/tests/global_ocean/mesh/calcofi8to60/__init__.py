@@ -9,9 +9,9 @@ from mpas_tools.cime.constants import constants
 from compass.ocean.tests.global_ocean.mesh.mesh import MeshStep
 
 
-class Kuroshio8to60Mesh(MeshStep):
+class CalCOFI8to60Mesh(MeshStep):
     """
-    A step for creating KuroshiowISC8to60 meshes
+    A step for creating CalCOFI8to60 meshes
     """
     def __init__(self, test_case, mesh_name, with_ice_shelf_cavities):
         """
@@ -31,13 +31,9 @@ class Kuroshio8to60Mesh(MeshStep):
 
         super().__init__(test_case, mesh_name, with_ice_shelf_cavities,
                          package=self.__module__,
-                         mesh_config_filename='kuroshio8to60.cfg')
+                         mesh_config_filename='calcofi8to60.cfg')
 
-        self.add_input_file(filename='wbc_rectangle3-1.geojson',
-                            package=self.__module__)
-        self.add_input_file(filename='wbc_rectangle3-2.geojson',
-                            package=self.__module__)
-        self.add_input_file(filename='wbc_rectangle3-3.geojson',
+        self.add_input_file(filename='calcofi.geojson',
                             package=self.__module__)
 
     def build_cell_width_lat_lon(self):
@@ -72,9 +68,9 @@ class Kuroshio8to60Mesh(MeshStep):
 
         _, cellWidth = np.meshgrid(lon, cellWidth)
 
-        fc1 = read_feature_collection('wbc_rectangle3-1.geojson')
+        fc1 = read_feature_collection('calcofi.geojson')
 
-        ks_signed_distance1 = signed_distance_from_geojson(fc1, lon, lat,
+        cf_signed_distance1 = signed_distance_from_geojson(fc1, lon, lat,
                                                           earth_radius,
                                                           max_length=0.25)
 
@@ -82,39 +78,7 @@ class Kuroshio8to60Mesh(MeshStep):
         trans_start = 0
         dx_min = 8.
 
-        weights = 0.5 * (1 + np.tanh((ks_signed_distance1 - trans_start) /
-                                     trans_width))
-
-        cellWidth = dx_min * (1 - weights) + cellWidth * weights
-
-
-        fc2 = read_feature_collection('wbc_rectangle3-2.geojson')
-
-        ks_signed_distance2 = signed_distance_from_geojson(fc2, lon, lat,
-                                                          earth_radius,
-                                                          max_length=0.25)
-
-        trans_width = 400e3
-        trans_start = 0
-        dx_min = 40.
-
-        weights = 0.5 * (1 + np.tanh((ks_signed_distance2 - trans_start) /
-                                     trans_width))
-
-        cellWidth = dx_min * (1 - weights) + cellWidth * weights
-
-
-        fc3 = read_feature_collection('wbc_rectangle3-3.geojson')
-
-        ks_signed_distance3 = signed_distance_from_geojson(fc3, lon, lat,
-                                                          earth_radius,
-                                                          max_length=0.25)
-
-        trans_width = 400e3
-        trans_start = 0
-        dx_min = 30.
-
-        weights = 0.5 * (1 + np.tanh((ks_signed_distance3 - trans_start) /
+        weights = 0.5 * (1 + np.tanh((cf_signed_distance1 - trans_start) /
                                      trans_width))
 
         cellWidth = dx_min * (1 - weights) + cellWidth * weights

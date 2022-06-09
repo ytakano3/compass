@@ -3,10 +3,10 @@ from compass.ocean.tests.global_ocean.dynamic_adjustment import \
 from compass.ocean.tests.global_ocean.forward import ForwardStep
 
 
-class Kuroshio8to60DynamicAdjustment(DynamicAdjustment):
+class CalCOFI8to60DynamicAdjustment(DynamicAdjustment):
     """
     A test case performing dynamic adjustment (dissipating fast-moving waves)
-    from an initial condition on the Kuroshio8to60 MPAS-Ocean mesh
+    from an initial condition on the CalCOFI8to60 MPAS-Ocean mesh
 
     Attributes
     ----------
